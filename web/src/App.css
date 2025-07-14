@@ -1,0 +1,55 @@
+.container {
+  max-width: 600px;
+  margin: 2rem auto;
+  font-family: Arial, sans-serif;
+}
+
+.title{
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.form-input,
+.form-select {
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+}
+
+.btn-submit {
+  display: block;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: #0056b3;
+}
+
+.btn-submit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-download {
+  background-color: #28a745;
+}
+
+.btn-download:hover {
+  background-color: #218838;
+}
