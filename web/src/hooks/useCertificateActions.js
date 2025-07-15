@@ -10,7 +10,7 @@ export function useCertificateActions(formData, setFormData) {
     setDownloadUrl('');
 
     try {
-      const res = await fetch('http://localhost:3000/certificate', {
+      const res = await fetch('http://api.carlosmartinez.bloock.xyz/certificate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -28,7 +28,7 @@ export function useCertificateActions(formData, setFormData) {
 
       const json = await res.json();
       const fileName = json.data.fileName;
-      setDownloadUrl(`http://localhost:3000/certificate/${fileName}`);
+      setDownloadUrl(`http://api.carlosmartinez.bloock.xyz/certificate/${fileName}`);
     } catch (error) {
       alert(`Error de red: ${error.message}`);
       console.error(error);
