@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export function useCertificateActions(formData, setFormData) {
-  const api = 'http://api.carlosmartinez.bloock.xyz';
+  const api = 'https://api.carlosmartinez.bloock.xyz';
   const [downloadUrl, setDownloadUrl] = useState('');
   const [loading, setLoading] = useState(false);
 

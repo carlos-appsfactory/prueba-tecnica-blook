@@ -47,7 +47,7 @@ export async function signPdf(filePath) {
 
   const options = {
     method: 'POST',
-    url: 'http://bloock:8080/v1/process',
+    url: 'https://bloock:8080/v1/process',
     headers: {
       ...form.getHeaders(),
       Accept: 'application/json',

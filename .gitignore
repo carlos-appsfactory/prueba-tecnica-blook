@@ -1,3 +1,5 @@
 api/node_modules/
 web/node_modules
 web/.vite
+proxy/certbot/conf
+proxy/certbot/www

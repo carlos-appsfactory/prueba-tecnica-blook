@@ -9,15 +9,22 @@ services:
     restart: unless-stopped
 
   proxy:
-    build: ./proxy
+    image: nginx:latest
+    container_name: prueba-tecnica-blook-proxy
     restart: unless-stopped
+    entrypoint: ["/usr/local/bin/entry_point.bash"]
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - ./proxy/certbot/conf:/etc/letsencrypt
+      - ./proxy/certbot/www:/var/www/certbot
+      - ./proxy/conf.d:/etc/nginx/conf.d:ro
+      - ./proxy/entry_point.bash:/usr/local/bin/entry_point.bash:ro
     depends_on:
       - api
       - web
-  
+
   bloock:
     image: bloock/managed-api
     restart: unless-stopped
