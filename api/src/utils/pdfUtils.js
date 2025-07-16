@@ -44,20 +44,26 @@ export async function signPdf(filePath) {
   const form = new FormData();
   const readStream = fs.createReadStream(filePath);
   form.append('file', readStream, 'certificate.pdf');
+  form.append('integrity.enabled', 'true');
+  form.append('authenticity.enabled', 'true');
+  form.append('authenticity.keySource', 'MANAGED_CERTIFICATE');
+  form.append('authenticity.key', '71f9742b-ab65-4413-993d-a8792dcc8650');
+  form.append('availability.enabled', 'true');
+  form.append('availability.type', 'HOSTED');
 
   const options = {
     method: 'POST',
-    url: 'https://bloock:8080/v1/process',
+    url: 'http://bloock:8080/v1/process',
     headers: {
       ...form.getHeaders(),
       Accept: 'application/json',
-      'API-Key': process.env.BLOOCK_BLOOCK_API_KEY,
     },
     data: form,
   };
 
   try {
     const { data } = await axios.request(options);
+    console.log(data);
     return data;
   } catch (error) {
     throw error;
