@@ -1,29 +1,16 @@
 services:
+  web:
+    build: ./web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:80"
+
   api:
     build: ./api
     restart: unless-stopped
     env_file: .env
-
-  web:
-    build: ./web
-    restart: unless-stopped
-
-  proxy:
-    image: nginx:latest
-    container_name: prueba-tecnica-blook-proxy
-    restart: unless-stopped
-    entrypoint: ["/usr/local/bin/entry_point.bash"]
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./proxy/certbot/conf:/etc/letsencrypt
-      - ./proxy/certbot/www:/var/www/certbot
-      - ./proxy/conf.d:/etc/nginx/conf.d:ro
-      - ./proxy/entry_point.bash:/usr/local/bin/entry_point.bash:ro
-    depends_on:
-      - api
-      - web
+      - "127.0.0.1:3500:80"
 
   bloock:
     image: bloock/managed-api
