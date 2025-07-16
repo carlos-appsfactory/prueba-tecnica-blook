@@ -16,7 +16,6 @@ const CertificateForm = () => {
 
   return (
     <form className="form" onSubmit={downloadUrl ? (e) => e.preventDefault() : handleSubmit}>
-      {/* Campos del formulario */}
       <label className="form-label">
         Dirección:
         <input

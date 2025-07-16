@@ -3,11 +3,14 @@ import path from 'path';
 import express from "express";
 import cors from 'cors';
 import PDFDocument from 'pdfkit';
+import axios from 'axios';
+import FormData from 'form-data';
 import { body, validationResult }  from 'express-validator';
 import { tmpdir } from 'os';
 import { randomUUID } from 'crypto';
+import { blob } from 'stream/consumers';
 
-const port = process.env.PORT || 80;
+const port = 80;
 const app = express();
 
 app.use(cors());
@@ -33,7 +36,7 @@ const certificateValidations = [
   body('propertyType')
     .notEmpty().withMessage({ text: 'El tipo de propiedad es obligatorio', code: 1006 })
     .bail()
-    .isIn(['apartment', 'house', 'commercial', 'office', 'land']).withMessage({ text: 'Tipo de propiedad no válido', code: 1007 }),
+    .isIn(['flat', 'house', 'commercial', 'office', 'land']).withMessage({ text: 'Tipo de propiedad no válido', code: 1007 }),
 
   body('energyRating')
     .notEmpty().withMessage({ text: 'El certificado energético es obligatorio', code: 1008 })
@@ -81,7 +84,7 @@ app.get("/certificate/:fileName", (req, res) =>{
   });
 });
 
-app.post("/certificate", certificateValidations, (req, res) => {
+app.post("/certificate", certificateValidations, async (req, res) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -100,8 +103,9 @@ app.post("/certificate", certificateValidations, (req, res) => {
   const pdf = new PDFDocument();
   const fileName = `certificate-${randomUUID()}`;
   const filePath = path.join(tmpdir(), `${fileName}.pdf`);
+  const writeStream = fs.createWriteStream(filePath);
 
-  pdf.pipe(fs.createWriteStream(filePath));
+  pdf.pipe(writeStream);
   
   pdf.fontSize(40)
     .font('Helvetica-Bold')
@@ -121,7 +125,34 @@ app.post("/certificate", certificateValidations, (req, res) => {
 
   pdf.end();
 
-  // TODO: Firmar el PDF con un certificado digital
+  await new Promise((resolve, reject) => {
+    writeStream.on('finish', resolve);
+    writeStream.on('error', reject);
+  });
+
+  // Firmar el PDF con un certificado digital
+  const form = new FormData();
+  const readStream = fs.createReadStream(filePath);
+  form.append('file', readStream, 'certificate.pdf');
+
+  const options = {
+    method: 'POST',
+    url: 'http://bloock:8080/v1/process',
+    headers: {
+      ...form.getHeaders(),
+      Accept: 'application/json',
+      'API-Key': process.env.BLOOCK_BLOOCK_API_KEY,
+    },
+    data: form
+  };
+
+  try {
+    const { data } = await axios.request(options);
+    console.log(data);
+  } catch (error) {
+    console.error('Error en la respuesta:', error.response?.data || error.message);
+  }
+  // Fin de firma digital
 
   return res.json({ success: true, data: { fileName: fileName }});
 });

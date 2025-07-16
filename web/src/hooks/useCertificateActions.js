@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 export function useCertificateActions(formData, setFormData) {
+  const api = 'http://api.carlosmartinez.bloock.xyz';
   const [downloadUrl, setDownloadUrl] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -10,7 +11,7 @@ export function useCertificateActions(formData, setFormData) {
     setDownloadUrl('');
 
     try {
-      const res = await fetch('http://api.carlosmartinez.bloock.xyz/certificate', {
+      const res = await fetch(`${api}/certificate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -28,7 +29,8 @@ export function useCertificateActions(formData, setFormData) {
 
       const json = await res.json();
       const fileName = json.data.fileName;
-      setDownloadUrl(`http://api.carlosmartinez.bloock.xyz/certificate/${fileName}`);
+      setDownloadUrl(`${api}/certificate/${fileName}`);
+    
     } catch (error) {
       alert(`Error de red: ${error.message}`);
       console.error(error);
@@ -59,6 +61,7 @@ export function useCertificateActions(formData, setFormData) {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+      
     } catch (error) {
       alert(`Error descargando el archivo: ${error.message}`);
       console.error(error);

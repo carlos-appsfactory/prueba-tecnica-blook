@@ -2,6 +2,7 @@ services:
   api:
     build: ./api
     restart: unless-stopped
+    env_file: .env
 
   web:
     build: ./web
@@ -13,6 +14,16 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - api
+      - web
+  
+  bloock:
+    image: bloock/managed-api
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8080:8080"
     depends_on:
       - api
       - web
