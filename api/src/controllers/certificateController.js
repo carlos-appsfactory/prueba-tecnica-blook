@@ -23,16 +23,33 @@ export async function createCertificate (req, res) {
 
   try {
     await generatePdf(filePath, data);
-    const {process_id, hash} = await signPdf(filePath);
 
-    return res.json({ success: true, data: { fileName, processId: process_id, hash} });
   } catch (error) {
+    console.error('Error generating PDF:', error);
     return res.status(500).json({
       success: false,
       errors: [
         {
-          "message": `Error firmando el archivo: ${error}`,
+          "message": `Ha ocurrido un error generando el PDF del certificado`,
           "code": 2000
+        }
+      ]
+    });
+  }
+
+  try {
+    const result = await signPdf(filePath);
+    const url = result.availability.url;
+    return res.json({ success: true, data: { url } });
+
+  } catch (error) {
+    console.error('Error signing PDF:', error);
+    return res.status(500).json({
+      success: false,
+      errors: [
+        {
+          "message": `Ha ocurrido un error firmando el pdf`,
+          "code": 2001
         }
       ]
     });

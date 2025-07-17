@@ -22,17 +22,19 @@ export function useCertificateActions(formData, setFormData) {
         const msg = Array.isArray(errorData.errors)
           ? errorData.errors.map(e => e.message).join(', ')
           : errorData.errors?.message || 'Error desconocido';
-        alert(`Error generando el certificado: ${msg}`);
+
+        alert(`Error generando el certificado`);
+        console.error(msg);
+
         setLoading(false);
         return;
       }
 
       const json = await res.json();
-      const fileName = json.data.fileName;
-      setDownloadUrl(`${api}/certificate/${fileName}`);
+      setDownloadUrl(json.data.url);
     
     } catch (error) {
-      alert(`Error de red: ${error.message}`);
+      alert(`Error de red`);
       console.error(error);
     }
 
@@ -48,13 +50,16 @@ export function useCertificateActions(formData, setFormData) {
         const msg = Array.isArray(errorData.errors)
           ? errorData.errors.map(e => e.message).join(', ')
           : errorData.errors?.message || 'Archivo no encontrado';
-        alert(`No se pudo descargar el certificado: ${msg}`);
+
+        alert(`No se pudo descargar el certificado`);
+        console.error(msg);
         return;
       }
 
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
+
       a.href = url;
       a.download = downloadUrl.split('/').pop();
       document.body.appendChild(a);
@@ -63,7 +68,7 @@ export function useCertificateActions(formData, setFormData) {
       window.URL.revokeObjectURL(url);
       
     } catch (error) {
-      alert(`Error descargando el archivo: ${error.message}`);
+      alert(`Error descargando el archivo`);
       console.error(error);
     }
   };

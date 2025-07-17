@@ -12,29 +12,29 @@ const pdfTexts = {
   'energyRating': 'Clase energética',
 };
 
-export function generatePdf(filePath, data) {
+export async function generatePdf(filePath, data) {
+  const pdf = new PDFDocument();
+  const writeStream = fs.createWriteStream(filePath);
+
+  pdf.pipe(writeStream);
+
+  pdf.fontSize(40).font('Helvetica-Bold').text('Certificado Energético', {
+    align: 'center',
+    underline: true,
+  });
+
+  pdf.fontSize(25).text(generateFormattedDate(), { align: 'center' });
+
+  pdf.moveDown().fontSize(14);
+
+  Object.entries(data).forEach(([key, value]) => {
+    pdf.font('Helvetica-Bold').text(`${pdfTexts[key]}: `, { continued: true });
+    pdf.font('Helvetica').text(`${value}`);
+  });
+
+  pdf.end();
+
   return new Promise((resolve, reject) => {
-    const pdf = new PDFDocument();
-    const writeStream = fs.createWriteStream(filePath);
-
-    pdf.pipe(writeStream);
-
-    pdf.fontSize(40).font('Helvetica-Bold').text('Certificado Energético', {
-      align: 'center',
-      underline: true,
-    });
-
-    pdf.fontSize(25).text(generateFormattedDate(), { align: 'center' });
-
-    pdf.moveDown().fontSize(14);
-
-    Object.entries(data).forEach(([key, value]) => {
-      pdf.font('Helvetica-Bold').text(`${pdfTexts[key]}: `, { continued: true });
-      pdf.font('Helvetica').text(`${value}`);
-    });
-
-    pdf.end();
-
     writeStream.on('finish', resolve);
     writeStream.on('error', reject);
   });
@@ -61,11 +61,6 @@ export async function signPdf(filePath) {
     data: form,
   };
 
-  try {
-    const { data } = await axios.request(options);
-    console.log(data);
-    return data;
-  } catch (error) {
-    throw error;
-  }
+  const { data } = await axios.request(options);
+  return data;
 }
