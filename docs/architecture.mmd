@@ -1,0 +1,17 @@
+graph TD
+    Cliente[Cliente]
+    Nginx[Nginx]
+    Certbot[Certbot SSL]
+    DockerWeb[Docker: React App]
+    DockerAPI[Docker: Node/Express API]
+    DockerBloock[Docker: Bloock]
+
+    Cliente -->|Petición web.carlosmartinez.bloock.xyz| Nginx
+    Cliente -->|Petición api.carlosmartinez.bloock.xyz| Nginx
+
+    Nginx -->|Redirige web| DockerWeb
+    Nginx -->|Redirige api| DockerAPI
+
+    DockerAPI -->|Llama para firmar PDFs| DockerBloock
+
+    Certbot -->|Gestiona certificados SSL| Nginx
